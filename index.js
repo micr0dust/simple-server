@@ -20,7 +20,7 @@ state
 2: wait for bidding from local
 3: wait for colab receive
 4: wait for colab update and get candidate
-5: end
+5,6: end
 */
 
 function display_card(cards){
@@ -55,7 +55,7 @@ const server = http.createServer((req, res) => {
     let parsedQuery = querystring.parse(parsedUrl.query);
 
     if (parsedQuery.reset) state=0;
-    if (parsedQuery.end) state=5;
+    if (parsedQuery.end && state<5) state=5;
 
     console.log("state", state);
 
@@ -71,6 +71,7 @@ const server = http.createServer((req, res) => {
             res.end('Y');
             state = 3;
         }else if(state==5){
+            state = 6;
             res.end('E');
         }else{
             res.end('None');
@@ -95,7 +96,7 @@ const server = http.createServer((req, res) => {
             data['hand'] = JSON.parse(parsedQuery.hand);
             res.end('Y');
             state = 1;
-        }else if(state==5){
+        }else if(state==6){
             res.end('E');
         }else{
             res.end('None');
